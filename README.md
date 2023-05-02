@@ -16,6 +16,7 @@ A dead-simple simple library for generating prefixed IDs that provide context to
 ### planned
 1. built-in prefixes for common use-cases (e.g "users", "accounts")
 1. UUID interop: (from UUID, to UUID, comparison, etc)
+1. performance / benchmarking
 1. sorting?
 
 ### background
