@@ -14,9 +14,9 @@ A dead-simple simple library for generating prefixed IDs that provide context to
 1. Create random did given a prefix
 1. Create did from UUID or properly-formatted string
 1. Methods for String, Length
+1. Validations for prefixes (alpha 2 or 3 characters)
 
 ### planned
-1. more validations
 1. built-in prefixes for common use-cases (e.g "users", "accounts")
 1. More UUID interop: (e.g. comparison)
 1. #Scan, #Value for DB reading + writing

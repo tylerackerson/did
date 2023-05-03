@@ -2,6 +2,7 @@ package did
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
@@ -9,6 +10,9 @@ import (
 )
 
 const DefaultSeparator = "-"
+const DefaultHexLength = 32
+
+var prefixRegex = regexp.MustCompile("^[a-zA-Z]{2,3}$")
 
 type Did struct {
 	prefix    string
@@ -17,10 +21,10 @@ type Did struct {
 }
 
 // New creates a randomly-generated did with the provided prefix and default separator.
-// Prefix strings must be two characters.
+// Prefix strings must be 2-3 upper or lower case alpha characters.
 func New(prefix string) (*Did, error) {
-	if len(prefix) != 2 {
-		return nil, fmt.Errorf("invalid prefix '%s'", prefix)
+	if err := validatePrefix(prefix); err != nil {
+		return nil, err
 	}
 
 	u, err := uuid.NewRandom()
@@ -37,12 +41,11 @@ func New(prefix string) (*Did, error) {
 }
 
 // DidFromUuid creates a did from a UUID, the provided prefix, and default separator.
-// Prefix strings must be two characters.
+// Prefix strings must be 2-3 upper or lower case alpha characters.
 func DidFromUuid(uuid uuid.UUID, prefix string) (*Did, error) {
-	if len(prefix) != 2 {
-		return nil, fmt.Errorf("invalid prefix '%s'", prefix)
+	if err := validatePrefix(prefix); err != nil {
+		return nil, err
 	}
-	// TODO: more validations
 
 	hex := strings.ReplaceAll(uuid.String(), "-", "")
 	return &Did{
@@ -60,11 +63,26 @@ func DidFromString(s string) (*Did, error) {
 		return nil, fmt.Errorf("invalid did string '%s'", s)
 	}
 
+	if err := validatePrefix(parts[0]); err != nil {
+		return nil, errors.Wrapf(err, "invalid did string '%s'", s)
+	}
+
+	if len(parts[1]) != DefaultHexLength {
+		return nil, fmt.Errorf("invalid did string '%s'", s)
+	}
+
 	return &Did{
 		prefix:    parts[0],
 		separator: DefaultSeparator,
 		hex:       parts[1],
 	}, nil
+}
+
+func validatePrefix(p string) error {
+	if match := prefixRegex.MatchString(p); !match {
+		return fmt.Errorf("invalid prefix '%s'", p)
+	}
+	return nil
 }
 
 // String returns the string representation of a did.
