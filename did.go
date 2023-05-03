@@ -10,6 +10,7 @@ import (
 )
 
 const DefaultSeparator = "-"
+const DefaultHexLength = 32
 
 var prefixRegex = regexp.MustCompile("^[a-zA-Z]{2,3}$")
 
@@ -59,6 +60,14 @@ func DidFromUuid(uuid uuid.UUID, prefix string) (*Did, error) {
 func DidFromString(s string) (*Did, error) {
 	parts := strings.Split(s, DefaultSeparator)
 	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid did string '%s'", s)
+	}
+
+	if err := validatePrefix(parts[0]); err != nil {
+		return nil, errors.Wrapf(err, "invalid did string '%s'", s)
+	}
+
+	if len(parts[1]) != DefaultHexLength {
 		return nil, fmt.Errorf("invalid did string '%s'", s)
 	}
 

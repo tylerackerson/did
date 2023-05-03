@@ -45,10 +45,25 @@ func TestString(t *testing.T) {
 	require.Equal(t, 1, strings.Count(s, DefaultSeparator))
 }
 
-func TestDidFromString(t *testing.T) {
+func TestDidFromValidString(t *testing.T) {
 	d, _ := New("ab")
-	_, err := DidFromString(d.String())
-	require.NoError(t, err)
+	d, err := DidFromString(d.String())
+	require.NoError(t, err, d)
+}
+
+func TestDidFromInvalidString(t *testing.T) {
+	prefixes := map[string]string{
+		"ab-526cac35b-e74429beb4f2ecca5-6c57":  "more than 1 separator",
+		"a9-526cac35b7e74429beb4f2ecca56c571":  "prefix invalid",
+		"ab_526cac35b7e74429beb4f2ecca56c571":  "separator invalid",
+		"ab-526cac357e74429beb4f2ecca56c571":   "hex has not enough chars",
+		"ab-526cac35b7e74429beb4f2ecca56c5711": "hex has too many chars",
+	}
+
+	for pr, desc := range prefixes {
+		_, err := DidFromString(pr)
+		require.Error(t, err, desc)
+	}
 }
 
 func TestDidFromUuid(t *testing.T) {
