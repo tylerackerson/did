@@ -20,10 +20,10 @@ type Did struct {
 }
 
 // New creates a randomly-generated did with the provided prefix and default separator.
-// Prefix strings must be two characters.
+// Prefix strings must be 2-3 upper or lower case alpha characters.
 func New(prefix string) (*Did, error) {
-	if match := prefixRegex.MatchString(prefix); !match {
-		return nil, fmt.Errorf("invalid prefix '%s'", prefix)
+	if err := validatePrefix(prefix); err != nil {
+		return nil, err
 	}
 
 	u, err := uuid.NewRandom()
@@ -40,10 +40,10 @@ func New(prefix string) (*Did, error) {
 }
 
 // DidFromUuid creates a did from a UUID, the provided prefix, and default separator.
-// Prefix strings must be two characters.
+// Prefix strings must be 2-3 upper or lower case alpha characters.
 func DidFromUuid(uuid uuid.UUID, prefix string) (*Did, error) {
-	if match := prefixRegex.MatchString(prefix); !match {
-		return nil, fmt.Errorf("invalid prefix '%s'", prefix)
+	if err := validatePrefix(prefix); err != nil {
+		return nil, err
 	}
 
 	hex := strings.ReplaceAll(uuid.String(), "-", "")
@@ -67,6 +67,13 @@ func DidFromString(s string) (*Did, error) {
 		separator: DefaultSeparator,
 		hex:       parts[1],
 	}, nil
+}
+
+func validatePrefix(p string) error {
+	if match := prefixRegex.MatchString(p); !match {
+		return fmt.Errorf("invalid prefix '%s'", p)
+	}
+	return nil
 }
 
 // String returns the string representation of a did.
