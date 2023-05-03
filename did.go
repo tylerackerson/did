@@ -2,6 +2,7 @@ package did
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
@@ -9,6 +10,8 @@ import (
 )
 
 const DefaultSeparator = "-"
+
+var prefixRegex = regexp.MustCompile("^[a-zA-Z]{2,3}$")
 
 type Did struct {
 	prefix    string
@@ -19,7 +22,7 @@ type Did struct {
 // New creates a randomly-generated did with the provided prefix and default separator.
 // Prefix strings must be two characters.
 func New(prefix string) (*Did, error) {
-	if len(prefix) != 2 {
+	if match := prefixRegex.MatchString(prefix); !match {
 		return nil, fmt.Errorf("invalid prefix '%s'", prefix)
 	}
 
@@ -39,10 +42,9 @@ func New(prefix string) (*Did, error) {
 // DidFromUuid creates a did from a UUID, the provided prefix, and default separator.
 // Prefix strings must be two characters.
 func DidFromUuid(uuid uuid.UUID, prefix string) (*Did, error) {
-	if len(prefix) != 2 {
+	if match := prefixRegex.MatchString(prefix); !match {
 		return nil, fmt.Errorf("invalid prefix '%s'", prefix)
 	}
-	// TODO: more validations
 
 	hex := strings.ReplaceAll(uuid.String(), "-", "")
 	return &Did{
