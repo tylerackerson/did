@@ -42,7 +42,7 @@ did, _ := did.DidFromString("us-526cac357e74429beb4f2ecca56c571f")
 1. other languages/ alphabets beyond English
 
 ### background
-At the last company I worked for, I joined very early on when the product was a simple prototype / demo. I immediately saw an opportunity to simplify and standardize the database schema. I proposed common metadata fields for all records, decided on a standard approach to "soft-deleting" records (where necessary), and prioritized creating a standard approach for records IDs that would make records far easier to reason about than UUIDs. 
+At the last company I worked for, I joined very early on when the product was a simple prototype / demo. I immediately saw an opportunity to simplify and standardize the database schema. I proposed common metadata fields for all records, implemented a migration strategy and tooling, decided on a standard approach to "soft-deleting" records (where necessary), and prioritized creating a standard approach for records IDs that would make records far easier to reason about than UUIDs. 
 
 There was a stark contrast to the UUID-only approach we had versus what I was used to from working at Twilio: [What is a SID?](https://www.twilio.com/docs/glossary/what-is-a-sid). And I knew that other developer-friendly companies took similar approaches. For example, Stripe also has prefixed IDs: [Designing APIs for humans: Object IDs](https://dev.to/stripe/designing-apis-for-humans-object-ids-3o5a). It turns out that Github and many others were doing the same: [Behind GitHub’s new authentication token formats](https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/). 
 
