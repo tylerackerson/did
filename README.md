@@ -18,7 +18,6 @@ did, _ := did.New("us")
 u := uuid.New()
 # a valid prefix is required
 did, _ := did.DidFromUuid(u, "us")
-
 ```
 
 ### creating a did from a valid did string
