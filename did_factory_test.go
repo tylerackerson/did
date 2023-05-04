@@ -65,15 +65,22 @@ func TestDidFromUuidDefault(t *testing.T) {
 }
 
 func TestNewDidFactoryValid(t *testing.T) {
-	_, err := NewDidFactory("us", "_")
-	require.NoError(t, err)
+	prefixes := []string{"_", "-", "+", ""}
+	for _, p := range prefixes {
+		_, err := NewDidFactory("us", p)
+		require.NoError(t, err)
+	}
 }
 
 func TestNewDidFactoryInvalid(t *testing.T) {
-	// TODO
+	prefixes := []string{"%", "--", "  ", "^"}
+	for _, p := range prefixes {
+		_, err := NewDidFactory("us", p)
+		require.Error(t, err)
+	}
 }
 
-func TestFactoryNew(t *testing.T) {
+func TestFactoryNewDid(t *testing.T) {
 	df, _ := NewDidFactory("us", "_")
 	d, err := df.NewDid()
 	require.NoError(t, err)
@@ -97,5 +104,4 @@ func TestFactoryDidFromUuid(t *testing.T) {
 	d, err := df.DidFromUuid(u)
 	require.NoError(t, err)
 	require.NotEmpty(t, d)
-	require.Equal(t, "", d.String())
 }

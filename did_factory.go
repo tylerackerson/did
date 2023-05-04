@@ -13,6 +13,7 @@ const DefaultSeparator = "-"
 const DefaultHexLength = 32
 
 var prefixRegex = regexp.MustCompile("^[a-zA-Z]{2,3}$")
+var separatorRegex = regexp.MustCompile(`^[_+-]?$`)
 
 type DidFactory struct {
 	prefix    string
@@ -20,7 +21,13 @@ type DidFactory struct {
 }
 
 func NewDidFactory(prefix string, separator string) (*DidFactory, error) {
-	// TODO: add validations
+	if err := validatePrefix(prefix); err != nil {
+		return nil, err
+	}
+	if err := validateSeparator(separator); err != nil {
+		return nil, err
+	}
+
 	return &DidFactory{prefix: prefix, separator: separator}, nil
 }
 
@@ -112,6 +119,13 @@ func FromString(s string, opts ...string) (*Did, error) {
 func validatePrefix(p string) error {
 	if match := prefixRegex.MatchString(p); !match {
 		return fmt.Errorf("invalid prefix '%s'", p)
+	}
+	return nil
+}
+
+func validateSeparator(s string) error {
+	if match := separatorRegex.MatchString(s); !match {
+		return fmt.Errorf("invalid prefix '%s'", s)
 	}
 	return nil
 }
