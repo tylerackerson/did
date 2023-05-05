@@ -31,10 +31,6 @@ Instead of providing a prefix every time, you can use a factory to generate dids
 df, _ := did.NewDidFactory("tot", "_")
 d, _ := df.NewDid()
 d.String() // tot_580a6ae69d3643289d83344c5925818c
-
-u := uuid.New()
-d, _ := df.DidFromUuid(u)
-d.String() // tot_5a9a1b8bf3fc47dd89605efe4d9e1828
 ```
 
 ## features

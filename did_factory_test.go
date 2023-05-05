@@ -114,7 +114,7 @@ func TestFactoryNewDid(t *testing.T) {
 }
 
 func TestFactoryDidFromValidString(t *testing.T) {
-	// for now, DidFactory does not validate  for prefix or separator matches
+	// for now, DidFactory does not validate for prefix or separator matches
 	df, _ := NewDidFactory("tot", "_")
 	d, _ := df.NewDid()
 	d, err := df.DidFromString(d.String())
@@ -127,12 +127,4 @@ func TestFactoryDidFromInvalidString(t *testing.T) {
 		_, err := df.DidFromString(str)
 		require.Error(t, err, desc)
 	}
-}
-
-func TestFactoryDidFromUuid(t *testing.T) {
-	df, _ := NewDidFactory("us", "_")
-	u := uuid.New()
-	d, err := df.DidFromUuid(u)
-	require.NoError(t, err)
-	require.NotEmpty(t, d)
 }

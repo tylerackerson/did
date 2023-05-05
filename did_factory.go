@@ -35,10 +35,6 @@ func (df *DidFactory) NewDid() (*Did, error) {
 	return New(df.prefix, df.separator)
 }
 
-func (df *DidFactory) DidFromUuid(uuid uuid.UUID) (*Did, error) {
-	return FromUuid(uuid, df.prefix, df.separator)
-}
-
 func (df *DidFactory) DidFromString(s string) (*Did, error) {
 	return FromString(s, df.separator)
 }
