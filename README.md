@@ -2,7 +2,7 @@
 A dead-simple simple library for generating prefixed IDs that provide context to consumers and creators alike.
 
 ## `did`s are:
-- **Distinct**, as all unique identifiers should be
+- **Distinct**, as all _unique_ identifiers are
 - **Definite**: "free of all ambiguity, uncertainty, or obscurity," thanks to prefixes
 - **Dang...** way easier to use than UUIDs `;)`
 
@@ -31,10 +31,6 @@ Instead of providing a prefix every time, you can use a factory to generate dids
 df, _ := did.NewDidFactory("tot", "_")
 d, _ := df.NewDid()
 d.String() // tot_580a6ae69d3643289d83344c5925818c
-
-u := uuid.New()
-d, _ := df.DidFromUuid(u)
-d.String() // tot_5a9a1b8bf3fc47dd89605efe4d9e1828
 ```
 
 ## features
@@ -53,8 +49,7 @@ d.String() // tot_5a9a1b8bf3fc47dd89605efe4d9e1828
 1. other languages/ alphabets beyond English
 
 ### background
-At the last company I worked for, I joined very early on when the product was a simple prototype / demo. I immediately saw an opportunity to simplify and standardize the database schema. I proposed common metadata fields for all records, implemented a migration strategy and tooling, decided on a standard approach to "soft-deleting" records (where necessary), and prioritized creating a standard approach for records IDs that would make records far easier to reason about than UUIDs. 
+Prefixed IDs provide context that makes data from APIs or user interfaces far easier to reason about. If you've ever needed to copy or paste an API key, token, or even your account ID, you have likely mixed up one ID with another at some point. To be fair, this is a minor annoyance... but there is a better way. I was first exposed to prefixed IDs when working at Twilio: ([What is a SID?](https://www.twilio.com/docs/glossary/what-is-a-sid)), and the approach just _made sense_. Using the API, users often had to reference their account ID (AC prefix). Or if they wanted to get the status of an SMS (SM prefix), they needed that. Or a phone number (PN prefix). And so on. This would be far more cumbersome with UUID-heavy records or any other approach that ignores the user (developer) experience. Of course, Twilio is not the only company to do this. For example, Stripe also uses prefixed IDs: [Designing APIs for humans: Object IDs](https://dev.to/stripe/designing-apis-for-humans-object-ids-3o5a). And, as it turns out, Github and many others are doing the same: [Behind GitHub’s new authentication token formats](https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/). 
 
-There was a stark contrast to the UUID-only approach we had versus what I was used to from working at Twilio: [What is a SID?](https://www.twilio.com/docs/glossary/what-is-a-sid). And I knew that other developer-friendly companies took similar approaches. For example, Stripe also has prefixed IDs: [Designing APIs for humans: Object IDs](https://dev.to/stripe/designing-apis-for-humans-object-ids-3o5a). It turns out that Github and many others were doing the same: [Behind GitHub’s new authentication token formats](https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/). 
-
-I proposed a solution to the rest of the engineering team, and all 4 of us agreed on the approach. So I created the `did` package for us internally, with some help from another founding engineer that had deep Go knowledge. We decided on prefixes for all of our most common tables where records were exposed to end-users. Other tables, e.g. join tables continued using UUIDs. The migration from UUID to dids was fairly straightforward. It required "dual-writing" both UUIDs and dids to tables, some backfilling, and updating foreign keys and other indexes. The last step was to drop all of the UUID columns.
+### migration strategy
+Moving tables from UUIDs or another type of unique ID will typically require adding a new column and "dual-writing" both UUIDs and dids. It's typically best to name the new column `id`, since dids are just one implementation of unique IDs. Start with nullable `id` columns, then change them to non-nullable _after_ completing backfills on your "pre-did" records. Update your foreign keys to reference dids, then... drop all the old columns! Most importantly, decide on an ID strategy early on to keep the migration simple. Or, better yet, start with prefixed IDs from the onset.
