@@ -111,7 +111,7 @@ func FromString(s string, opts ...string) (*Did, error) {
 
 	return &Did{
 		prefix:    parts[0],
-		separator: DefaultSeparator,
+		separator: sep,
 		hex:       parts[1],
 	}, nil
 }

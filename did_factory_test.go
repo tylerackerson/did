@@ -115,7 +115,7 @@ func TestFactoryNewDid(t *testing.T) {
 
 func TestFactoryDidFromValidString(t *testing.T) {
 	// for now, DidFactory does not validate  for prefix or separator matches
-	df, _ := NewDidFactory("us", "_")
+	df, _ := NewDidFactory("tot", "_")
 	d, _ := df.NewDid()
 	d, err := df.DidFromString(d.String())
 	require.NoError(t, err, d)
