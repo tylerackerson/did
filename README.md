@@ -18,12 +18,23 @@ did, _ := did.New("us")
 u := uuid.New()
 # a valid prefix is required
 did, _ := did.DidFromUuid(u, "us")
-
 ```
 
 ### creating a did from a valid did string
 ```
 did, _ := did.DidFromString("us-526cac357e74429beb4f2ecca56c571f")
+```
+
+## using a DidFactory
+Instead of providing a prefix every time, you can use a factory to generate dids. Using a DidFactory is also the easiest way to use a separator other than the default (`-`).
+```
+df, _ := did.NewDidFactory("tot", "_")
+d, _ := df.NewDid()
+d.String() // tot_580a6ae69d3643289d83344c5925818c
+
+u := uuid.New()
+d, _ := df.DidFromUuid(u)
+d.String() // tot_5a9a1b8bf3fc47dd89605efe4d9e1828
 ```
 
 ## features
