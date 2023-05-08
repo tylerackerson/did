@@ -66,3 +66,63 @@ func TestLength(t *testing.T) {
 	expected := len(d.prefix) + len(d.separator) + len(d.hex)
 	require.Equal(t, expected, d.Length())
 }
+
+func TestMust(t *testing.T) {
+	for _, data := range prefixes {
+		if data.err != nil {
+			require.Panics(t, func() {
+				Must(New(data.val))
+			})
+		} else {
+			require.NotPanics(t, func() {
+				Must(New(data.val))
+			})
+		}
+	}
+}
+
+func TestMustNew(t *testing.T) {
+	for _, data := range prefixes {
+		if data.err != nil {
+			require.Panics(t, func() {
+				MustNew(data.val)
+			})
+		} else {
+			require.NotPanics(t, func() {
+				MustNew(data.val)
+			})
+		}
+	}
+}
+
+func TestMustFromUuid(t *testing.T) {
+	for _, data := range prefixes {
+		u := uuid.New()
+
+		if data.err != nil {
+			require.Panics(t, func() {
+				MustFromUuid(u, data.val)
+			})
+		} else {
+			require.NotPanics(t, func() {
+				MustFromUuid(u, data.val)
+			})
+		}
+	}
+}
+
+func TestMustFromString(t *testing.T) {
+	for _, data := range prefixes {
+		if data.err != nil {
+			continue
+		}
+
+		d := MustNew(data.val)
+		require.NotPanics(t, func() {
+			MustFromString(d.String())
+		})
+		require.Panics(t, func() {
+			MustFromString(d.String() + "random#string$invalid")
+		})
+	}
+}
