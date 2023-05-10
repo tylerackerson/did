@@ -1,6 +1,7 @@
 package did
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"strings"
 
@@ -62,6 +63,7 @@ func FromUuid(uuid uuid.UUID, prefix string, opts ...string) (*Did, error) {
 // FromString creates a did from a string.
 // Basic validation is performed to ensure the did is correctly formatted.
 func FromString(s string, opts ...string) (*Did, error) {
+	// TODO: determine separator from the string
 	sep := DefaultSeparator
 	if len(opts) != 0 {
 		sep = opts[0]
@@ -95,6 +97,51 @@ func (d Did) String() string {
 // Length returns the integer length of a did, including the prefix, separator, and hex.
 func (d Did) Length() int {
 	return len(d.String())
+}
+
+// Scan is very similar to UUID's Scan.
+// It implements sql.Scanner so dids can be read from databases transparently.
+// Database types mapping to string and []byte are supported.
+func (did *Did) Scan(src interface{}) error {
+	switch src := src.(type) {
+	case nil:
+		return nil
+
+	case string:
+		// if an empty did comes from a table, we return a null did
+		if src == "" {
+			return nil
+		}
+
+		d, err := FromString(src)
+		if err != nil {
+			return errors.Wrapf(err, "failed to Scan value into did: %s", src)
+		}
+		*did = *d
+
+	case []byte:
+		// if an empty did comes from a table, we return a nil did
+		if len(src) == 0 {
+			return nil
+		}
+
+		d, err := FromString(string(src))
+		if err != nil {
+			return errors.Wrapf(err, "failed to Scan value into did: %s", src)
+		}
+		*did = *d
+
+	default:
+		return fmt.Errorf("unable to scan type %T into did", src)
+	}
+
+	return nil
+}
+
+// Value is very similar to UUID's Value.
+// It implements sql.Valuer so that dids can be written to databases transparently.
+func (did Did) Value() (driver.Value, error) {
+	return did.String(), nil
 }
 
 // Must returns a did if err is nil and panics otherwise.
