@@ -20,10 +20,10 @@ func NewDidFactory(prefix string, separator string) (*DidFactory, error) {
 	return &DidFactory{prefix: prefix, separator: separator}, nil
 }
 
-func (df *DidFactory) NewDid() (*Did, error) {
+func (df *DidFactory) NewDid() (Did, error) {
 	return New(df.prefix, df.separator)
 }
 
-func (df *DidFactory) DidFromUuid(uuid uuid.UUID) (*Did, error) {
+func (df *DidFactory) DidFromUuid(uuid uuid.UUID) (Did, error) {
 	return FromUuid(uuid, df.prefix, df.separator)
 }
