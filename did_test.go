@@ -22,10 +22,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestDidFromString(t *testing.T) {
-	for _, data := range prefixes {
-		if data.err != nil {
-			continue
-		}
+	for _, data := range validPrefixes() {
 		d, _ := New(data.val)
 		ds, err := FromString(d.String())
 		require.NoError(t, err, data.desc)
@@ -70,11 +67,7 @@ func TestLength(t *testing.T) {
 
 func TestScan(t *testing.T) {
 	// happy path, scanning valid strings
-	for _, data := range prefixes {
-		if data.err != nil {
-			continue
-		}
-
+	for _, data := range validPrefixes() {
 		d := MustNew(data.val)
 
 		// strings
@@ -89,11 +82,7 @@ func TestScan(t *testing.T) {
 	}
 
 	// bad strings, error expected
-	for i, data := range prefixes {
-		if data.err != nil {
-			continue
-		}
-
+	for i, data := range validPrefixes() {
 		d := MustNew(data.val)
 		var invalidStr string
 		if i%2 == 0 {
@@ -131,11 +120,7 @@ func TestScan(t *testing.T) {
 }
 
 func TestValue(t *testing.T) {
-	for _, data := range prefixes {
-		if data.err != nil {
-			continue
-		}
-
+	for _, data := range validPrefixes() {
 		d := MustNew(data.val)
 		val, _ := d.Value()
 		require.Equal(t, d.String(), val)
@@ -187,11 +172,7 @@ func TestMustFromUuid(t *testing.T) {
 }
 
 func TestMustFromString(t *testing.T) {
-	for _, data := range prefixes {
-		if data.err != nil {
-			continue
-		}
-
+	for _, data := range validPrefixes() {
 		d := MustNew(data.val)
 		require.NotPanics(t, func() {
 			MustFromString(d.String())

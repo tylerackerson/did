@@ -20,6 +20,16 @@ var prefixes = []data{
 	{"k9", "has numbers", errors.New("")},
 }
 
+func validPrefixes() []data {
+	valid := make([]data, 0)
+	for _, p := range prefixes {
+		if p.err == nil {
+			valid = append(valid, p)
+		}
+	}
+	return valid
+}
+
 var separators = []data{
 	{"_", "underscore", nil},
 	{"-", "hyphen", nil},
