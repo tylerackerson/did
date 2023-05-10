@@ -9,7 +9,8 @@ const DefaultSeparator = "-"
 const DefaultHexLength = 32
 
 var prefixRegex = regexp.MustCompile("^[a-zA-Z]{2,3}$")
-var separatorRegex = regexp.MustCompile(`^[_+-]?$`)
+var separatorRegex = regexp.MustCompile(`[_+-]`)
+var separatorRegexStrict = regexp.MustCompile(`^[_+-]$`)
 
 func validatePrefix(p string) error {
 	if match := prefixRegex.MatchString(p); !match {
@@ -19,7 +20,7 @@ func validatePrefix(p string) error {
 }
 
 func validateSeparator(s string) error {
-	if match := separatorRegex.MatchString(s); !match {
+	if match := separatorRegexStrict.MatchString(s); !match {
 		return fmt.Errorf("invalid prefix '%s'", s)
 	}
 	return nil
