@@ -36,6 +36,7 @@ var separators = []data{
 	{"+", "plus sign", nil},
 	{"", "empty/ no separator", errors.New("")},
 	{"%", "invalid symbol", errors.New("")},
+	{" -", "extra whitespace", errors.New("")},
 	{"--", "more than one character", errors.New("")},
 	{" ", "whitespace", errors.New("")},
 	{"^", "caret (circumflex)", errors.New("")},
