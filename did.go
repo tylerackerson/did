@@ -62,14 +62,14 @@ func FromUuid(uuid uuid.UUID, prefix string, opts ...string) (Did, error) {
 
 // FromString creates a did from a string.
 // Basic validation is performed to ensure the did is correctly formatted.
-func FromString(s string, opts ...string) (Did, error) {
-	// TODO: determine separator from the string
-	sep := DefaultSeparator
-	if len(opts) != 0 {
-		sep = opts[0]
+func FromString(s string) (Did, error) {
+	matches := separatorRegex.FindAllString(s, -1)
+	if len(matches) != 1 {
+		return Did{}, fmt.Errorf("invalid did string '%s'", s)
 	}
+	sep := matches[0]
 
-	parts := strings.Split(s, sep)
+	parts := strings.Split(s, matches[0])
 	if len(parts) != 2 {
 		return Did{}, fmt.Errorf("invalid did string '%s'", s)
 	}
@@ -163,6 +163,6 @@ func MustFromUuid(uuid uuid.UUID, prefix string, opts ...string) Did {
 }
 
 // MustFromString creates a did from a string or panics.
-func MustFromString(s string, opts ...string) Did {
-	return Must(FromString(s, opts...))
+func MustFromString(s string) Did {
+	return Must(FromString(s))
 }
