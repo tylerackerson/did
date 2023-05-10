@@ -1,6 +1,7 @@
 package did
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -65,6 +66,80 @@ func TestLength(t *testing.T) {
 	d := Did{prefix: "ab", separator: "-", hex: "aaabbbcccddd"}
 	expected := len(d.prefix) + len(d.separator) + len(d.hex)
 	require.Equal(t, expected, d.Length())
+}
+
+func TestScan(t *testing.T) {
+	// happy path, scanning valid strings
+	for _, data := range prefixes {
+		if data.err != nil {
+			continue
+		}
+
+		d := MustNew(data.val)
+
+		// strings
+		var did Did
+		err := (&did).Scan(d.String())
+		require.NoError(t, err)
+
+		// bytes
+		bytes := []byte(d.String())
+		err = (&did).Scan(bytes)
+		require.NoError(t, err)
+	}
+
+	// bad strings, error expected
+	for i, data := range prefixes {
+		if data.err != nil {
+			continue
+		}
+
+		d := MustNew(data.val)
+		var invalidStr string
+		if i%2 == 0 {
+			invalidStr = d.String()[:d.Length()-2] // remove chars
+		} else {
+			invalidStr = d.String() + "a9d" // add extra chars
+		}
+
+		var did Did
+		err := (&did).Scan(invalidStr)
+		require.Error(t, err)
+		require.Contains(t, err.Error(), fmt.Sprintf("failed to Scan value into did: %s", invalidStr))
+	}
+
+	// bad types, error expected
+	var did Did
+	err := (&did).Scan(90)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "unable to scan type int")
+
+	err = (&did).Scan(Did{})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "unable to scan type did.Did")
+
+	// empty did, should not fail
+	empty := Did{}
+	err = (&did).Scan(empty.String())
+	require.NoError(t, err)
+	require.Empty(t, did)
+
+	var emptyBytes []byte
+	err = (&did).Scan(emptyBytes)
+	require.NoError(t, err)
+	require.Empty(t, did)
+}
+
+func TestValue(t *testing.T) {
+	for _, data := range prefixes {
+		if data.err != nil {
+			continue
+		}
+
+		d := MustNew(data.val)
+		val, _ := d.Value()
+		require.Equal(t, d.String(), val)
+	}
 }
 
 func TestMust(t *testing.T) {
